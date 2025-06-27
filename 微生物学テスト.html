@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ランダム微生物学名クイズ</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .question { margin-bottom: 20px; }
+    .result { font-weight: bold; color: green; margin-top: 20px; }
+    input[type="text"] { width: 100%; padding: 5px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>微生物学クイズ（順番ランダム）</h1>
+  <form id="quizForm"></form>
+  <button onclick="checkAnswers()">回答する</button>
+  <div class="result" id="result"></div>
+
+  <script>
+    const herbs = [
+      { name: "アシネトバクターバウマニ",sci:"Acinetobacter baumannii"},
+      { name: "炭疽菌",sci:"Bacillus anthracis"},
+      { name: "百日咳菌",sci:"Bordetella pertussis"},
+      { name: "カンピロバクタージェジェニ",sci:"Campylobacter jejuni"},
+      { name: "オウム病クラミジア",sci:"Chlamydia psittaci"},
+      { name: "トラコーマクラミジア",sci:"Chlamydia trachomatis"},
+      { name: "肺炎クラミジア",sci:"Chlamydophila pneumoniae"},
+      { name: "ボツリヌス菌",sci:"Clostridium botulinum"},
+      { name: "クロトリディオイデスディフィシル",sci:"Clostridioides difficile"},
+      { name: "破傷風菌",sci:"Clostridium tetani"},
+      { name: "ジフテリア菌",sci:"Corynebacterium diphtheriae"},
+      { name: "腸球菌",sci:"Enterococcus faecalis"},
+      { name: "大腸菌",sci:"Escherichia coli"},
+      { name: "野兎病菌",sci:"Francisella tularensis"},
+      { name: "インフルエンザ病",sci:"Haemophilus influenzae"},
+      { name: "ヘリコバクターピロリ",sci:"Helicobacter pylori"},
+      { name: "肺炎桿菌",sci:"Klebsiella pneumoniae"},
+      { name: "肺炎レジオネラ",sci:"Legionella pneumophila"},
+      { name: "リステリアモノサイトゲネス",sci:"Listeria monocytogenes"},
+      { name: "結核菌",sci:"Mycobacterium tuberculosis"},
+      { name: "肺炎マイコプラズマ",sci:"Mycoplasma pneumoniae"},
+      { name: "淋菌",sci:"Neisseria gonorrhoeae"},
+      { name: "髄膜炎菌",sci:"Neisseria meningitidis"},
+      { name: "プロテウスブルガリス",sci:"Proteus vulgaris"},
+      { name: "緑膿菌",sci:"Pseudomonas aeruginosa"},
+      { name: "チフス菌",sci:"Salmonella Typhi"},
+      { name: "滋賀赤痢菌",sci:"Shigella dysenteriae"},
+      { name: "黄色ブドウ球菌",sci:"Staphylococcus aureus"},
+      { name: "化膿レンサ球菌",sci:"Streptococcus pyogenes"},
+      { name: "肺炎球菌",sci:"Streptococcus pneumoniae"},
+      { name: "梅毒トレポネーマ",sci:"Treponema pallidum"},
+      { name: "コレラ菌",sci:"Vibrio cholerae"},
+      { name: "腸炎ビブリオ",sci:"Vibrio parahaemolyticus"},
+      { name: "ペスト菌",sci:"Yersinia pestis"},
+      { name: "Acinetobacter baumannii", sci: "アシネトバクターバウマニ" },
+      { name: "Bacillus anthracis", sci: "炭疽菌" },
+      { name: "Bordetella pertussis", sci: "百日咳菌" },
+      { name: "Campylobacter jejuni", sci: "カンピロバクタージェジェニ" },
+      { name: "Chlamydia psittaci", sci: "オウム病クラミジア" },
+      { name: "Chlamydia trachomatis", sci: "トラコーマクラミジア" },
+      { name: "Chlamydophila pneumoniae", sci: "肺炎クラミジア" },
+      { name: "Clostridium botulinum", sci: "ボツリヌス菌" },
+      { name: "Clostridioides difficile", sci: "クロトリディオイデスディフィシル" },
+      { name: "Clostridium tetani", sci: "破傷風菌" },
+      { name: "Corynebacterium diphtheriae", sci: "ジフテリア菌" },
+      { name: "Enterococcus faecalis", sci: "腸球菌" },
+      { name: "Escherichia coli", sci: "大腸菌" },
+      { name: "Francisella tularensis", sci: "野兎病菌" },
+      { name: "Haemophilus influenzae", sci: "インフルエンザ病" },
+      { name: "Helicobacter pylori", sci: "ヘリコバクターピロリ" },
+      { name: "Klebsiella pneumoniae", sci: "肺炎桿菌" },
+      { name: "Legionella pneumophila", sci: "肺炎レジオネラ" },
+      { name: "Listeria monocytogenes", sci: "リステリアモノサイトゲネス" },
+      { name: "Mycobacterium tuberculosis", sci: "結核菌" },
+      { name: "Mycoplasma pneumoniae", sci: "肺炎マイコプラズマ" },
+      { name: "Neisseria gonorrhoeae", sci: "淋菌" },
+      { name: "Neisseria meningitidis", sci: "髄膜炎菌" },
+      { name: "Proteus vulgaris", sci: "プロテウスブルガリス" },
+      { name: "Pseudomonas aeruginosa", sci: "緑膿菌" },
+      { name: "Salmonella Typhi", sci: "チフス菌" },
+      { name: "Shigella dysenteriae", sci: "滋賀赤痢菌" },
+      { name: "Staphylococcus aureus", sci: "黄色ブドウ球菌" },
+      { name: "Streptococcus pyogenes", sci: "化膿レンサ球菌" },
+      { name: "Streptococcus pneumoniae", sci: "肺炎球菌" },
+      { name: "Treponema pallidum", sci: "梅毒トレポネーマ" },
+      { name: "Vibrio cholerae", sci: "コレラ菌" },
+      { name: "Vibrio parahaemolyticus", sci: "腸炎ビブリオ" },
+      { name: "Yersinia pestis", sci: "ペスト菌" }
+         ];
+
+    // ランダムに並び替える関数
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const shuffledHerbs = shuffle([...herbs]).slice(0, 10); // ランダムに５個並べる
+
+    const quizForm = document.getElementById("quizForm");
+    shuffledHerbs.forEach((herb, index) => {
+      const qDiv = document.createElement("div");
+      qDiv.className = "question";
+      qDiv.innerHTML = `
+        <p>Q${index + 1}. 学名:「${herb.name}」</p>
+        <label>学名：</label>
+        <input type="text" id="sci${index}">
+       `;
+      quizForm.appendChild(qDiv);
+    });
+
+    function checkAnswers() {
+      let score = 0;
+      let feedback = "";
+
+      shuffledHerbs.forEach((herb, index) => {
+        const userSci = document.getElementById(`sci${index}`).value.trim().toLowerCase();
+        const userFam = document.getElementById(`fam${index}`).value.trim();
+
+        const isSciCorrect = userSci === herb.sci.toLowerCase();
+        const isFamCorrect = userFam === herb.fam;
+
+        feedback += `
+  <p>
+    Q${index + 1}（${herb.name}）:<br>
+    学名：${isSciCorrect ? "✅ 正解" : `❌ 不正解（正解: ${herb.sci}）`}<br>
+    科名：${isFamCorrect ? "✅ 正解" : `❌ 不正解（正解: ${herb.fam}）`}
+  </p>
+`;  //なんでーうまくーいかないのー
+         
+
+        if (isSciCorrect) score++;
+        if (isFamCorrect) score++;
+      });
+
+      feedback += `<p>合計スコア: ${score} / ${shuffledHerbs.length * 2}</p>`;
+      document.getElementById("result").innerHTML = feedback;
+    }
+  </script>
+</body>
+</html>
